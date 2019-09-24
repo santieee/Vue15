@@ -54,11 +54,13 @@ export default {
   align-items: center;
   justify-content: center;
 }
+
 .selectors{
   display: flex;
   flex-direction: column;
 }
 .selectors>input{
   text-align: center;
+  height: 10px;
 }
 </style>

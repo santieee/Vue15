@@ -5,10 +5,9 @@
         <div 
           v-for="(blockY, iY) in y" 
           :key="iY"
-          :class="x*y == (iY+1)+(iX*y)?'block empty':'block'" 
-          :id="`x${iX+1}-y${iY+1}`"
+          class='block'
           :style="{top: iX*55+'px', left: iY*55+'px'}"
-          @click="move"
+          @click="move(x*y == iY+(iX*y)? '&nbsp;' : iY+(iX*y))"
         >   
          {{arr[x*y == iY+(iX*y)? '&nbsp;' : iY+(iX*y)]}}
         </div>
@@ -36,47 +35,40 @@ export default {
   data(){
     return{
       arr:[],
-      showWin: false,
       counter: 0,
     }
   },
   methods:{
-    move(){
-      let target = event.target;
-      // получаем координаты target
-      let [x,y] = target.id.split('-').map(e => e.replace(/\D+/g,""));
+    move(num){
       let aroundBlocks = [
-        document.querySelector(`#x${--x}-y${y}`),
-        document.querySelector(`#x${x+2}-y${y}`),
-        document.querySelector(`#x${++x}-y${++y}`),
-        document.querySelector(`#x${x}-y${y-2}`)
-      ]
-      for(let block of aroundBlocks){
+        {target: this.arr[num%this.x == 0 ? null :num-1], id: num-1},
+        {target: this.arr[(num+1)%this.x == 0 ? null: num+1], id: num+1},
+        {target: this.arr[num+this.y], id: num+this.y},
+        {target: this.arr[num-this.y], id: num-this.y},
+      ]  
+      for(let i in aroundBlocks){
         try{
-          if(block.classList[1]){
-            return this.swap(target, block);
+          if(aroundBlocks[i].target == ' '){
+            return this.swap(num, aroundBlocks[i].id);          
           }
         }catch{}
       }
     },
-    swap(target, empty){
-      [empty.style.left, target.style.left, empty.style.top, target.style.top, target.id, empty.id] = [target.style.left, empty.style.left, target.style.top, empty.style.top, empty.id, target.id];
+    swap(target, empty){      
+      [this.arr[target], this.arr[empty]] = [this.arr[empty], this.arr[target]];
       this.checkWin();
       this.counter++;
     },
     shuffle(){
        this.arr = new Array(this.x * this.y - 1).fill().map((e,i) => i+1).sort(() => Math.random() - 0.5);
+       this.arr.push(' ');
        this.counter = 0;
     },
     checkWin(){
-      let count = 1;
-      for(let i=0; i<this.x; i++){
-        for(let k=0; k<this.y; k++){
-          if(count < this.x*this.y && count !== +document.querySelector(`#x${i+1}-y${k+1}`).textContent){          
-            return;       
-          }
-          count++;
-        }
+      for(let i = 0; i<this.arr.length; i++){
+        if(this.arr[i] !== i+1){
+          return
+        } 
       }
       setTimeout(()=> alert('win!!!'), 220);
     }
