@@ -1,18 +1,20 @@
 <template>
   <div>
-    <div class="container" :style="{height: x*55+'px', width: y*55+'px'}">
-      <div v-for="(blockX, iX) in x" :key="iX">
-        <div 
-          v-for="(blockY, iY) in y" 
-          :key="iY"
-          class='block'
-          :style="{top: iX*55+'px', left: iY*55+'px'}"
-          @click="move(x*y == iY+(iX*y)? '&nbsp;' : iY+(iX*y))"
-        >   
-         {{arr[x*y == iY+(iX*y)? '&nbsp;' : iY+(iX*y)]}}
+    <transition name="fade">
+      <div class="container" :style="{height: x*55+'px', width: y*55+'px'}">
+        <div v-for="(blockX, iX) in x" :key="iX">
+          <div 
+            v-for="(blockY, iY) in y" 
+            :key="iY"
+            class='block'
+            :style="{top: iX*55+'px', left: iY*55+'px'}"
+            @click="move(x*y == iY+(iX*y)? '&nbsp;' : iY+(iX*y))"
+          >   
+           {{arr[x*y == iY+(iX*y)? '&nbsp;' : iY+(iX*y)]}}
+          </div>
         </div>
       </div>
-    </div>
+    </transition>
     <div v-text="counter" class="under"></div>
     <button @click="shuffle" class="under">Refresh</button>
     <br><hr>
@@ -41,8 +43,8 @@ export default {
   methods:{
     move(num){
       let aroundBlocks = [
-        {target: this.arr[num%this.x == 0 ? null :num-1], id: num-1},
-        {target: this.arr[(num+1)%this.x == 0 ? null: num+1], id: num+1},
+        {target: this.arr[num%this.y == 0 ? null :num-1], id: num-1},
+        {target: this.arr[(num+1)%this.y == 0 ? null: num+1], id: num+1},
         {target: this.arr[num+this.y], id: num+this.y},
         {target: this.arr[num-this.y], id: num-this.y},
       ]  
@@ -99,5 +101,16 @@ export default {
   }
   .under{
     margin-top: 20px;
+  }
+  .slide-fade-enter-active {
+    transition: all .3s ease;
+  }
+  .slide-fade-leave-active {
+    transition: all .8s cubic-bezier(1.0, 0.5, 0.8, 1.0);
+  }
+  .slide-fade-enter, .slide-fade-leave-to
+  /* .slide-fade-leave-active до версии 2.1.8 */ {
+    transform: translateX(10px);
+    opacity: 0;
   }
 </style>
