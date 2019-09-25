@@ -1,18 +1,19 @@
 <template>
   <div id="app">
-    <game v-if="game" @gameoff="game = false" :x="+x" :y="+y"></game>
-    <div class="selectors" v-else>
-      <label>Введите количество блоков в длину: 
-        
-      </label>
-      <input type="number" min="2" max="10" name="x" v-model="x">
-      <label>Введите количество блоков в ширину: 
-        
-      </label>
-      <input type="number" min="2" max="10" name="y" v-model="y">
-      <button @click="goGame">Go</button>
-    </div>
-    
+    <transition name="component-fade" mode="out-in">
+      <game v-if="game" @gameoff="game = false" :x="+x" :y="+y"></game>
+      <div class="selectors" v-else>
+
+        <label>Введите количество блоков в высоту:</label>
+        <input type="number" min="2" max="10" name="x" v-model="x">
+
+        <label>Введите количество блоков в ширину:</label>
+        <input type="number" min="2" max="10" name="y" v-model="y">
+
+        <button @click="goGame">Go</button>
+
+      </div>
+    </transition>
   </div>
 </template>
 
@@ -63,4 +64,11 @@ export default {
   text-align: center;
   height: 10px;
 }
+.component-fade-enter-active, .component-fade-leave-active {
+   transition: opacity .3s ease;
+ }
+ .component-fade-enter, .component-fade-leave-to
+ /* .component-fade-leave-active до версии 2.1.8 */ {
+   opacity: 0;
+ }
 </style>

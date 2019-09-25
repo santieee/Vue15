@@ -1,20 +1,21 @@
 <template>
   <div>
-    <transition name="fade">
-      <div class="container" :style="{height: x*55+'px', width: y*55+'px'}">
-        <div v-for="(blockX, iX) in x" :key="iX">
-          <div 
-            v-for="(blockY, iY) in y" 
-            :key="iY"
-            class='block'
-            :style="{top: iX*55+'px', left: iY*55+'px'}"
-            @click="move(x*y == iY+(iX*y)? '&nbsp;' : iY+(iX*y))"
-          >   
-           {{arr[x*y == iY+(iX*y)? '&nbsp;' : iY+(iX*y)]}}
-          </div>
-        </div>
+    <transition-group 
+      name="block" 
+      tag="div" 
+      class="container" 
+      :style="{height: x*55+'px', width: y*55+'px'}"
+    >    
+      <div 
+        v-for="(cell,i) in (x*y)"
+        :key="arr[i]"
+        :style="{top: Math.floor(i/y)*55+'px', left:i%y*55+'px'}"
+        @click="move(x*y == i? '&nbsp;' : i)"
+        class="block" 
+      >
+        {{arr[i]}}
       </div>
-    </transition>
+    </transition-group>
     <div v-text="counter" class="under"></div>
     <button @click="shuffle" class="under">Refresh</button>
     <br><hr>
@@ -47,13 +48,11 @@ export default {
         {target: this.arr[(num+1)%this.y == 0 ? null: num+1], id: num+1},
         {target: this.arr[num+this.y], id: num+this.y},
         {target: this.arr[num-this.y], id: num-this.y},
-      ]  
+      ]
       for(let i in aroundBlocks){
-        try{
-          if(aroundBlocks[i].target == ' '){
-            return this.swap(num, aroundBlocks[i].id);          
-          }
-        }catch{}
+        if(aroundBlocks[i].target == ' '){
+          return this.swap(num, aroundBlocks[i].id);          
+        }
       }
     },
     swap(target, empty){      
@@ -80,7 +79,7 @@ export default {
   }
 }
 </script>
-<style lang="scss">
+<style>
   .container{
     position: relative;
     border: 1px solid black;
@@ -94,6 +93,7 @@ export default {
     margin: 2px;
     font-size: 2.5em;
     transition: .2s;
+    transition: all 0.5s;
   }
   .block:hover{
     background-color: rgb(96, 205, 235, .6);
@@ -102,15 +102,19 @@ export default {
   .under{
     margin-top: 20px;
   }
-  .slide-fade-enter-active {
-    transition: all .3s ease;
-  }
-  .slide-fade-leave-active {
-    transition: all .8s cubic-bezier(1.0, 0.5, 0.8, 1.0);
-  }
-  .slide-fade-enter, .slide-fade-leave-to
-  /* .slide-fade-leave-active до версии 2.1.8 */ {
-    transform: translateX(10px);
+  .block-enter, .block-leave-to, .block-leave-active  {
     opacity: 0;
+    transform: scale(0);
+  }
+  .block-enter-to {
+    opacity: 1;
+    transform: scale(1);
+  }
+  .block-leave-active {
+    position: absolute;
+  }
+  .block-move {
+    opacity: 1;
+    transition: all 0.5s;
   }
 </style>
