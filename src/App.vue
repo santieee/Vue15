@@ -13,7 +13,7 @@
         <button @click="goGame">Go</button>
 
       </div>
-    </transition>
+    </transition>adasdasdasd
   </div>
 </template>
 
